@@ -1,30 +1,41 @@
-NAME = pipex
+NAME		=	pipex
+NAME_BONUS	=	pipex_b
 
-SRC = pipex.c ft_command.c pipex_utils.c ft_split.c ft_substr.c
+SRCS = ft_command.c pipex_utils.c ft_split.c ft_substr.c get_next_line.c ft_strchr.c
 
-OBJ = $(patsubst %.c,%.o,$(SRC))
+MAIN = pipex.c
+MAIN_B = pipex_bonus.c
 
-INCL = pipex.h
+OBJ			= $(patsubst %.c,%.o,$(SRCS) $(MAIN))
+OBJ_BONUS	= $(patsubst %.c,%.o,$(SRCS) $(MAIN_B))
 
-CFLAGS = -Wall -Wextra -Werror
+INCL		=	pipex.h
 
-all : $(NAME)
+CFLAGS		=	-Wall -Wextra -Werror
 
-$(NAME) : $(OBJ)
-	@gcc $(OBJ) -o $@
-	@echo "\033[32mPipex Compiled! ☯ "
+all				: $(NAME)
 
-%.o : %.c $(INCL)
-	@gcc $(CFLAGS) -c $< -o $@
+$(NAME)			: $(OBJ)
+					@gcc $(OBJ) -o $(NAME)
+					@echo "\033[32mPipex Compiled! ☯ "
 
-clean :
-	@rm -f $(OBJ)
-	@echo "\033[33m----Clean completed----"
+$(NAME_BONUS)	: $(OBJ_BONUS)
+					@gcc $(OBJ_BONUS) -o $(NAME)
+					@echo "\033[32mPipex Compiled! ☯ "
 
-fclean : clean
-	@rm -f $(NAME)
-	@echo "\033[33m----Fclean completed----"
+bonus			: $(NAME_BONUS) clean
 
-re : fclean all
+#%.o				: %.c $(INCL)
+#					@gcc $(CFLAGS) -c $< -o $@
 
-.PHONY : all clean fclean re
+clean 			:
+					@rm -f $(OBJ) $(OBJ_BONUS)
+					@echo "\033[33m----Clean completed----"
+
+fclean			: clean
+					@rm -f $(NAME)
+					@echo "\033[33m----Fclean completed----"
+
+re				: fclean all
+
+.PHONY : all clean fclean re bonus
