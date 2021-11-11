@@ -7,7 +7,7 @@
 # include <stdarg.h>
 
 # ifndef	BUFFER_SIZE
-# define	BUFFER_SIZE 32
+# define	BUFFER_SIZE 1
 # endif
 
 char	*ft_command(char *argv, char **envp, int i);

@@ -1,22 +1,22 @@
 #include "pipex.h"
 
-static void ft_herdoc(char *limited)
+void ft_heredoc(char *limited)
 {
-	int fd[2];
 	pid_t pid;
+	int fd[2];
 	char *line;
 
 	if (pipe(fd) == -1)
 		perror("Pipe");
 	pid = fork();
 	if (pid == -1)
-		perror("Pid");
+		perror("Fork");
 	if (pid == 0)
 	{
 		close(fd[0]);
 		while (get_next_line(0, &line))
 		{
-			if (ft_strnstr(line, limited, ft_strlen(limited)) == 0)
+			if (ft_strnstr(line, limited, ft_strlen(limited)))
 				exit(0);
 			write(fd[1], line, ft_strlen(line));
 		}
@@ -57,21 +57,32 @@ static void ft_child(char *cmd, char **envp)
 	}
 }
 
+static void ft_parent(int f_out, char **argv, int argc, char **envp)
+{
+	char **command;
+	char *path;
+
+	dup2(f_out, STDOUT_FILENO);
+	command = ft_split(argv[argc - 2], ' ');
+	path = ft_command(command[0], envp, 0);
+	execve(path, command, envp);
+}
+
 int main(int argc, char **argv, char **envp)
 {
 	int i;
 	int f_in;
 	int f_out;
-	char **command;
-	char *path;
 
 	if (argc >= 5)
 	{
-		if (ft_strnstr(argv[1], "here_doc", 8) == 0)
+		if (ft_strnstr(argv[1], "here_doc", 8))
 		{
 			i = 2;
 			f_out = open(argv[argc - 1], O_WRONLY | O_CREAT | O_APPEND, 0777);
-			ft_herdoc(argv[2]);
+			if (f_out == -1)
+				perror("File");
+			ft_heredoc(argv[2]);
 		}
 		else
 		{
@@ -82,9 +93,6 @@ int main(int argc, char **argv, char **envp)
 		}
 		while (++i < argc - 2)
 			ft_child(argv[i], envp);
-		dup2(f_out, STDOUT_FILENO);
-		command = ft_split(argv[argc - 2], ' ');
-		path = ft_command(command[0], envp, 0);
-		execve(path, command, envp);
+		ft_parent(f_out, argv, argc, envp);
 	}
 }
