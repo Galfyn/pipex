@@ -1,16 +1,28 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   pipex_bonus.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: galfyn <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/11/12 16:41:06 by galfyn            #+#    #+#             */
+/*   Updated: 2021/11/12 17:03:06 by galfyn           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "pipex.h"
 
-void ft_heredoc(char *limited)
+void	ft_heredoc(char *limited)
 {
-	pid_t pid;
-	int fd[2];
-	char *line;
+	pid_t	pid;
+	int		fd[2];
+	char	*line;
 
 	if (pipe(fd) == -1)
-		perror("Pipe");
+		ft_error("Pipe", 1);
 	pid = fork();
 	if (pid == -1)
-		perror("Fork");
+		ft_error("Fork", 1);
 	if (pid == 0)
 	{
 		close(fd[0]);
@@ -29,25 +41,21 @@ void ft_heredoc(char *limited)
 	}
 }
 
-static void ft_child(char *cmd, char **envp)
+static void	ft_child(char *cmd, char **envp)
 {
-	int fd[2];
-	int pid;
-	char **command;
-	char *path;
+	int	fd[2];
+	int	pid;
 
 	if (pipe(fd) == -1)
-		perror("Pipe");
+		ft_error("Pipe", 1);
 	pid = fork();
 	if (pid == -1)
-		perror("Pid");
+		ft_error("Pid", 1);
 	if (pid == 0)
 	{
 		close(fd[0]);
 		dup2(fd[1], STDOUT_FILENO);
-		command = ft_split(cmd, ' ');
-		path = ft_command(command[0], envp, 0);
-		execve(path, command, envp);
+		ft_execute(cmd, envp);
 	}
 	else
 	{
@@ -57,42 +65,54 @@ static void ft_child(char *cmd, char **envp)
 	}
 }
 
-static void ft_parent(int f_out, char **argv, int argc, char **envp)
+int	ft_open_file(char *path, int code)
 {
-	char **command;
-	char *path;
+	int	fd;
 
-	dup2(f_out, STDOUT_FILENO);
-	command = ft_split(argv[argc - 2], ' ');
-	path = ft_command(command[0], envp, 0);
-	execve(path, command, envp);
+	if (code == 0)
+	{
+		fd = open(path, O_WRONLY | O_CREAT | O_APPEND, 0777);
+		if (fd == -1)
+			ft_error("File out", 1);
+	}
+	if (code == 1)
+	{
+		open(path, O_RDONLY, 0777);
+		if (fd == -1)
+			ft_error("File out", 1);
+	}
+	if (code == 2)
+	{
+		fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, 0777);
+		if (fd == -1)
+			ft_error("File out", 1);
+	}
+	return (fd);
 }
 
-int main(int argc, char **argv, char **envp)
+int	main(int argc, char **argv, char **envp)
 {
-	int i;
-	int f_in;
-	int f_out;
+	int	i;
+	int	f_in;
+	int	f_out;
 
-	if (argc >= 5)
+	if (argc < 6)
+		ft_error("Error: Not enough arguments\n", 2);
+	if (ft_strnstr(argv[1], "here_doc", 8))
 	{
-		if (ft_strnstr(argv[1], "here_doc", 8))
-		{
-			i = 2;
-			f_out = open(argv[argc - 1], O_WRONLY | O_CREAT | O_APPEND, 0777);
-			if (f_out == -1)
-				perror("File");
-			ft_heredoc(argv[2]);
-		}
-		else
-		{
-			i = 1;
-			f_in = open(argv[1], O_RDONLY, 0777);
-			f_out = open(argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0777);
-			dup2(f_in, STDIN_FILENO);
-		}
-		while (++i < argc - 2)
-			ft_child(argv[i], envp);
-		ft_parent(f_out, argv, argc, envp);
+		i = 2;
+		f_out = ft_open_file(argv[argc - 1], 0);
+		ft_heredoc(argv[2]);
 	}
+	else
+	{
+		i = 1;
+		f_in = ft_open_file(argv[1], 1);
+		f_out = ft_open_file(argv[argc - 1], 2);
+		dup2(f_in, STDIN_FILENO);
+	}
+	while (++i < argc - 2)
+		ft_child(argv[i], envp);
+	dup2(f_out, STDOUT_FILENO);
+	ft_execute(argv[argc - 2], envp);
 }

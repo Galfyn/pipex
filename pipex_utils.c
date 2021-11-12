@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   pipex_utils.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: galfyn <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/11/12 16:41:16 by galfyn            #+#    #+#             */
+/*   Updated: 2021/11/12 16:47:05 by galfyn           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "pipex.h"
 size_t	ft_strlen(const char *s)
 {
@@ -10,7 +22,6 @@ size_t	ft_strlen(const char *s)
 	}
 	return (i);
 }
-
 
 char	*ft_strdup(const char *s1)
 {
@@ -65,7 +76,7 @@ char	*ft_strnstr(const char *haystack, const char *needle, size_t len)
 	{
 		n = 0;
 		while (needle[n] != '\0' && haystack[i + n] == needle[n]
-		&& i + n < len && haystack[i + n] != '\0')
+			&& i + n < len && haystack[i + n] != '\0')
 			n++;
 		if (n == ft_strlen(needle))
 			return ((char *)haystack + i);
@@ -73,4 +84,3 @@ char	*ft_strnstr(const char *haystack, const char *needle, size_t len)
 	}
 	return (NULL);
 }
-
