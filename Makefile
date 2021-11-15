@@ -6,54 +6,50 @@
 #    By: galfyn <marvin@42.fr>                      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/11/12 17:59:33 by galfyn            #+#    #+#              #
-#    Updated: 2021/11/12 18:24:17 by galfyn           ###   ########.fr        #
+#    Updated: 2021/11/15 16:50:46 by galfyn           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME		=	pipex
-NAME_BONUS	=	pipex
+NAME			=	mandatory/pipex
+NAME_B			=	bonus/pipex
 
-SRCS =	ft_command_path.c	\
-		get_next_line.c		\
-		pipex_utils.c 		\
-		ft_substr.c 		\
-		ft_strchr.c 		\
-		ft_split.c 			\
-		ft_error.c			\
+SRCS			=	global/ft_command_path.c	\
+					global/get_next_line.c		\
+					global/pipex_utils.c 		\
+					global/ft_substr.c 			\
+					global/ft_strchr.c 			\
+					global/ft_split.c 			\
+					global/ft_error.c			\
 
-MAIN			=	pipex.c
-MAIN_B 			= 	pipex_bonus.c
+MAIN			=	mandatory/pipex.c
+MAIN_B 			= 	bonus/pipex_bonus.c
 
-OBJ				= $(patsubst %.c,%.o,$(SRCS) $(MAIN))
-OBJ_BONUS		= $(patsubst %.c,%.o,$(SRCS) $(MAIN_B))
+OBJ				= 	$(patsubst %.c,%.o,$(SRCS) $(MAIN))
+OBJ_B			= 	$(patsubst %.c,%.o,$(SRCS) $(MAIN_B))
 
-INCL			=	pipex.h
+INCL			=	-I./pipex.h
 
 CFLAGS			=	-Wall -Wextra -Werror
 
-all				: $(NAME)
+all				: 	$(NAME)
 
-$(NAME)			: $(OBJ)
-					gcc $(OBJ) -o $(NAME)
-					@echo "\033[32m Pipex Compiled done! ☯ "
+$(NAME)			: 	$(OBJ)
+						gcc $(CFLAGS) $(OBJ) -o $(NAME)
+						@echo "\033[32m Pipex Compiled done! ☯ "
+$(NAME_B)		: 	$(OBJ_B)
+						gcc $(CFLAGS) $(OBJ_B) -o $(NAME_B)
+						@echo "\033[32m Pipex_bonus Compiled done! ☯ "
 
-$(NAME_BONUS)	: $(OBJ_BONUS)
-					gcc $(OBJ_BONUS) -o $(NAME_BONUS)
-					@echo "\033[32m Pipex Compiled done! ☯ "
-
-bonus			: $(NAME_BONUS)
-
-%.o				: %.c $(INCL)
-					gcc $(CFLAGS) -c $< -o $@
+bonus			: 	$(NAME_B)
 
 clean 			:
-					@rm -f $(OBJ) $(OBJ_BONUS)
-					@echo "\033[33m ----Clean completed----"
+						@rm -f $(OBJ) $(OBJ_B)
+						@echo "\033[33m ----Clean completed----"
 
-fclean			: clean
-					@rm -f $(NAME)
-					@echo "\033[33m ----Fclean completed----"
+fclean			: 	clean
+						@rm -f $(NAME) $(NAME_B)
+						@echo "\033[33m ----Fclean completed----"
 
-re				: fclean all
+re				: 	fclean all
 
-.PHONY			: all clean fclean re bonus
+.PHONY			:	all clean fclean re bonus

@@ -1,29 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strchr.c                                        :+:      :+:    :+:   */
+/*   ft_error.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: galfyn <galfyn@student.21-school.ru>       +#+  +:+       +#+        */
+/*   By: galfyn <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/04/20 21:01:53 by galfyn            #+#    #+#             */
-/*   Updated: 2021/09/21 01:18:33 by galfyn           ###   ########.fr       */
+/*   Created: 2021/11/12 16:40:34 by galfyn            #+#    #+#             */
+/*   Updated: 2021/11/12 16:40:36 by galfyn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "../pipex.h"
 
-char	*ft_strchr(const char *s, int c)
+void	ft_error(char *str, int code)
 {
-	size_t	i;
-	char	*str;
-
-	str = (char *)s;
-	i = 0;
-	while (str[i] != (char) c)
+	if (code == 1)
 	{
-		if (str[i] == '\0')
-			return (NULL);
-		i++;
+		perror(str);
+		exit(1);
 	}
-	return (str + i);
+	if (code == 2)
+	{
+		write(1, str, ft_strlen(str));
+		exit(1);
+	}
 }
