@@ -6,7 +6,7 @@
 /*   By: galfyn <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/12 16:41:06 by galfyn            #+#    #+#             */
-/*   Updated: 2021/11/12 17:03:06 by galfyn           ###   ########.fr       */
+/*   Updated: 2021/11/15 18:40:40 by galfyn           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ void	ft_heredoc(char *limited)
 	}
 }
 
-static void	ft_child(char *cmd, char **envp)
+void	ft_child(char *cmd, char **envp)
 {
 	int	fd[2];
 	int	pid;
@@ -69,6 +69,7 @@ int	ft_open_file(char *path, int code)
 {
 	int	fd;
 
+	fd = 0;
 	if (code == 0)
 	{
 		fd = open(path, O_WRONLY | O_CREAT | O_APPEND, 0777);
@@ -77,7 +78,7 @@ int	ft_open_file(char *path, int code)
 	}
 	if (code == 1)
 	{
-		open(path, O_RDONLY, 0777);
+		fd = open(path, O_RDONLY, 0777);
 		if (fd == -1)
 			ft_error("File out", 1);
 	}
@@ -100,19 +101,20 @@ int	main(int argc, char **argv, char **envp)
 		ft_error("Error: Not enough arguments\n", 2);
 	if (ft_strnstr(argv[1], "here_doc", 8))
 	{
-		i = 2;
+		i = 3;
 		f_out = ft_open_file(argv[argc - 1], 0);
 		ft_heredoc(argv[2]);
 	}
 	else
 	{
-		i = 1;
-		f_in = ft_open_file(argv[1], 1);
+		i = 2;
 		f_out = ft_open_file(argv[argc - 1], 2);
+		f_in = ft_open_file(argv[1], 1);
 		dup2(f_in, STDIN_FILENO);
 	}
-	while (++i < argc - 2)
-		ft_child(argv[i], envp);
+	while (i < argc - 2)
+		ft_child(argv[i++], envp);
 	dup2(f_out, STDOUT_FILENO);
 	ft_execute(argv[argc - 2], envp);
+	exit(0);
 }

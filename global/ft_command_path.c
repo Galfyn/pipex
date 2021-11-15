@@ -77,6 +77,4 @@ void	ft_execute(char *argv, char **envp)
 	path = ft_command_path(command[0], envp, 0);
 	if (execve(path, command, envp) == -1)
 		ft_error("Command", 1);
-	ft_free_arr(command);
-	free(path);
 }
